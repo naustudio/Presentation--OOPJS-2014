@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">-->
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+  <!--This one seems to work all the time, but really small on ipad-->
+  <!--<meta name="viewport" content="initial-scale=0.4">-->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" media="all" href="theme/css/default.css">
+  <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="theme/css/phone.css">
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->
+  <script data-main="js/slides" src="js/require-1.0.8.min.js"></script>
+</head>
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="logoslide nobackground">
+    <article class="flexbox vcenter">
+      <span><img src="images/logo.png"></span>
+    </article>
+  </slide>
+
+  <slide class="title-slide segue nobackground">
+    <aside class="gdbar"><img src="images/logo.png"></aside>
+    <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+    </hgroup>
+  </slide>
+
+  <slide classs="contents">
+    <hgroup>
+      <h2>Contents</h2>
+    </hgroup>
+    <article>
+      <ul class="build">
+        <li>UNDERSTANDING OBJECT
+          <ul>
+            <li>What is Object ?</li>
+            <li>Properties</li>
+          </ul>
+        </li>
+        <li>OBJECT CREATION
+          <ul>
+            <li>The Factory Pattern</li>
+            <li>The Constructor Pattern</li>
+            <li>The Prototype Pattern</li>
+            <li>Combination Constructor/Prototype Pattern</li>
+          </ul>
+        </li>
+        <li>INHERITANCE
+          <ul>
+            <li>Prototype Chaining</li>
+            <li>Constructor Stealing</li>
+            <li>Combination Inheritance</li>
+            <li>Prototypal Inheritance</li>
+          </ul>
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>Before we talk about Object, maybe we should talk a lil bit about ECMA-262, Because we will maybe use this word many times in this presentation.</p>
+          </li>
+          <li>
+            <p>This is a standard defines the ECMAScript scripting language, and for someone who is still have no idea what is ECMAScript : the scripting language standardized by Ecma International in the ECMA-262</p>
+          </li>
+          <li>
+            <p>ECMA-262 defines an object as an "unordered collection of properties each of which contains a primitive value, object, or function.". Each property or method is identified by a name that is mapped to a value.</p>
+          </li>
+          <li>
+            <p>Actually, It’s nothing more than a grouping of name-value pairs where the value may be data or a function.</p>
+          </li>
+          <li>
+            <p>Just take a look at this example : </p>
+          </li>
+          <li>
+            <p>But why does this work? I mean, what actually happened underground when we add a name-value pair ( a property ) to an object and the result is the object has the property with name and value inside?</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>1. What is Object ? </h2>
+    </hgroup>
+    <article>
+      <ul class="build">
+        <li>ECMA-262
+          <p>a standard defines the ECMAScript scripting language</p>
+        </li>
+        <li>ECMAScript
+          <p>the scripting language standardized by Ecma International in the ECMA-262</p>
+        </li>
+        <li>
+          <p>What is object ? : "Unordered collection of properties each of which contains a primitive value, object, or function."</p>
+        </li>
+        <li>name-value pairs </li>
+      </ul>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  var person = {
+    name: "Hans",
+    age: 26,
+    job: "Super Junior Developer",
+    sayName: function(){
+        console.log(this.name);
+    }
+  };
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>When a property is first added to an object, JavaScript uses an internal method called [[Put]] on the object. </p>
+          </li>
+          <li>
+            <p>The [[Put]] method creates a spot in the object to store the property. The result of calling [[Put]] is the creation of an own property (remember this) on the object.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>1. What is Object ? </h2>
+    </hgroup>
+    <article>
+      <ul class="build">
+        <li>[[Put]] ( first time )
+          <ul class="build">
+            <li>creates a spot in the object to store the property</li>
+            <li>The result of calling [[Put]] is the creation of an <span class="italic bold">own property</span> on the object.</li>
+          </ul>
+          <br>
+        </li>
+        <li>[[Set]]
+          <ul class="build">
+            <li>This operation replaces the current value of the property with the new one.</li>
+          </ul>
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>But there is a difference if it is the first time or not. When a new value is assigned to an existing property, a separate operation called [[Set]] takes place. This operation replaces the current value of the property with the new one.</p>
+          </li>
+          <li>
+            <p>Where do [[Put]] method and [[Set]] operation come from ? May be in Javascript Engine or in Universe. Try to figure it out after this presentation ( if u r so fucking curious … and I love it ).</p>
+          </li>
+          <li>
+            <p>The person variable doesn’t contain the object actually, it contains a point, and this point points to the actual object. So when a variable is assigned an object like this : </p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  var person = {
+    name: "Hans",
+    age: 26,
+    job: "Super Junior Developer",
+    sayName: function(){
+        console.log(this.name);
+    }
+  };
+  person.name = "Le Roi";
+        </pre>
+      </article>
+      <article class="build centered">
+        <img class="build" src="images/demos/put_set.png" width="750" alt="">
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>This one means the variables share a pointer to point to an object. So remember when we interact with an object, it doesn’t mean that we are interacting it directly.</p>
+          </li>
+          <li>
+            <p>By the way, I think we should clear confused definitions like reference, instance. What is instance ? What is reference ? Like I said before, I used pointer, but I should use reference instead.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  var object1, object2;
+  object1 = {
+    a: 3.14159
+  }
+  <b>object2 = object1;</b>
+        </pre>
+      </article>
+      <article class="build centered">
+        <p><br>The real picture is : <br><br></p>
+      </article>
+      <article class="build centered">
+        <img class="build" src="images/demos/ObjectExamle01x2.png" alt="">
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>So let’s get back to the example :</p>
+          </li>
+          <li>
+            <p>Now we say it again : both object1 and object2 hold references to the same object with data : { a: 3.14159 }</p>
+          </li>
+          <li>
+            <p>Now we go deep inside the properties </p>
+          </li>
+          <li>
+            <p>There are two types of properties: Data properties and Accessor properties. </p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+    <article>
+      <hgroup>
+        <h2>What is instance and references ? :S </h2>
+        <br>
+      </hgroup>
+      <article>
+        <ul class="build">
+          <li>A variable will hold a reference to an instance of an object.</li>
+          <li>The actual object is an instance</li>
+        </ul>
+      </article>
+      <article class="build centered">
+        <p><br><img class="build" src="images/demos/ObjectExamle01x2.png" alt=""></p>
+      </article>
+    </article>
+  </slide>
+
+
+  <slide>
+
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>[[Configurable]] : Indicates if the property may be redefined by removing the property via delete, changing the property’s attributes, or changing the property into an accessor property. By default, this is true for all properties defined directly on an object, as in the previous example.</p>
+          </li>
+          <li>
+            <p>[[Enumerable]] : Indicates if the property will be returned in a for-in loop. By default, this is true for all properties defined directly on an object, as in the previous example.</p>
+          </li>
+          <li>
+            <p>[[Writable]] — Indicates if the property’s value can be changed. By default, this is true for all properties defined directly on an object, as in the previous example.</p>
+          </li>
+          <li>
+            <p>[[Value]] — Contains the actual data value for the property. This is the location from which the property’s value is read and the location to which new values are saved. The default value for this attribute is undefined</p>
+          </li>
+          <li>
+            <p>So in the previous example, the property called a is created and a value of 3.14159 is assigned. That means [[Value]] is set to 3.14159, and any changes to that value are stored in this location.</p>
+          </li>
+          <li>
+            <p>How about the other internal attributes? We can change them though a method of ECMAScript 5: Object.defineProperty().</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup class="build">
+        <h2>Properties</h2>
+        <h3>Data properties</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <ul class="build">
+        <li>Data properties contain a single location for a data value. Values are read from and written to this location</li>
+        <li>Data properties have four attributes describing their behavior :
+          <ul class="build">
+            <li>[[Configurable]]</li>
+            <li>[[Enumerable]]</li>
+            <li>[[Writable]]</li>
+            <li>[[Value]]</li>
+          </ul>
+        </li>
+        <li>
+          <p>[[Configurable]], [[Enumerable]], [[Writable]] are true <b>for all properties defined directly on an object</b>, as in the previous example.</p>
+        </li>
+        <li>
+          <p>[[Value]] attribute is set to the assigned value.</p>
+        </li>
+        <li>
+          <p>Object.defineProperty().</p>
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>This method accepts three arguments: the object on which  the property should be added or modified, the name of the property, and a descriptor object… like this : </p>
+          </li>
+          <li>
+            <p>That’s it, but there is something you should know that setting configurable to false means that the property cannot be removed from the object. Calling delete on the property has no effect in nonstrict mode and throws an error in strict mode. Additionally, once a property has been defined as nonconfigurable, it cannot become configurable again. Any attempt to call Object.defineProperty() and change any attribute other than writable causes an error:</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>ECMAScript 5: Object.defineProperty()</h2>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  var person1 = {};
+
+  Object.defineProperty(person1, "name", {
+    value: "Neo",
+    enumerable: true,
+    configurable: true,
+    writable: true
+  });
+        </pre>
+      </article>
+      <article>
+        <ul class="build">
+          <li>
+            <p>Setting configurable to false means that the property cannot be removed from the object.</p>
+          </li>
+          <li>
+            <p>Once a property has been defined as nonconfigurable, it cannot become configurable again.</p>
+          </li>
+        </ul>
+      </article>
+    </article>
+  </slide>
+
+
+  <slide>
+
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>This method accepts three arguments: the object on which  the property should be added or modified, the name of the property, and a descriptor object… like this : </p>
+          </li>
+          <li>
+            <p>That’s it, but there is something you should know that setting configurable to false means that the property cannot be removed from the object. Calling delete on the property has no effect in nonstrict mode and throws an error in strict mode. Additionally, once a property has been defined as nonconfigurable, it cannot become configurable again. Any attempt to call Object.defineProperty() and change any attribute other than writable causes an error:</p>
+          </li>
+          <li>
+            <p>That means you can call Object.defineProperty() multiple times for the same property, but there are limits once configurable has been set to false</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>ECMAScript 5: Object.defineProperty()</h2>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  var person = {};
+  Object.defineProperty(person, "name", {
+    <b>configurable: false,</b>
+    value: "Neo"
+  });
+
+  Object.defineProperty(person, "name", {
+    <b>configurable: true,</b> // ← error here
+    value: "Neo"
+  }); // <b>this will throw an error</b>
+        </pre>
+      </article>
+      <article>
+        <ul class="build">
+          <li>
+            <p>Note : Internet Explorer 8 was the first version to implement Object .defineProperty(). Unfortunately, the implementation is extremely limited. This method can be used only on DOM objects and can create only accessor properties.</p>
+          </li>
+        </ul>
+      </article>
+    </article>
+  </slide>
+
+
+  <slide>
+
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>Accessor Properties contain a combination of a getter function and a setter function (though both are not necessary). When an accessor property is read from, the getter function is called, and it’s the function’s responsibility to return a valid value; when an accessor property is written to, a function is called with the new value, and that function must decide how to react to the data. </p>
+          </li>
+          <li><p>[[Configurable]] — Indicates if the property may be redefined by removing the property via delete, changing the property’s attributes, or changing the property into a data property. By default, this is true for all properties defined directly on an object.</p></li>
+          <li><p>[[Enumerable]] — Indicates if the property will be returned in a for-in loop. By default, this is true for all properties defined directly on an object.</p></li>
+          <li><p>[[Get]] — The function to call when the property is read from. The default value is undefined.</p></li>
+          <li><p>[[Set]] — The function to call when the property is written to. The default value is undefined.</p></li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup class="build">
+        <h2>Properties</h2>
+        <h3>Accessor properties</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <ul class="build">
+        <li>Accessor Properties contain a combination of a getter function and a setter function (though both are not necessary).</li>
+        <li>Accessor properties have four attributes:
+          <ul class="build">
+            <li>[[Configurable]]</li>
+            <li>[[Enumerable]]</li>
+            <li>[[Get]]</li>
+            <li>[[Set]]</li>
+          </ul>
+        </li>
+        <li>
+          <p>[[Configurable]], [[Enumerable]] are true <b>for all properties defined directly on an object</b>, as in the previous example.</p>
+        </li>
+        <li>
+          <p>When an accessor property is read from, the getter function [[Get]] is called</p>
+        </li>
+        <li>
+          <p>when an accessor property is written to, the setter function [[Set]] is called.</p>
+        </li>
+        <li>
+          <p>It is not possible to define an accessor property explicitly so you must use Object.defineProperty().</p>
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>This method accepts three arguments: the object on which  the property should be added or modified, the name of the property, and a descriptor object… like this : </p>
+          </li>
+          <li>
+            <p>So there are some javascript frameworks like EmberJS and BackboneJS both use accessors (getters and setters) on wrapped objects for listening events when the object have changes, but other ones use dirty-checking, but we should discuss this in another time cause I dun wanna go so far away from our topic, OOP.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>ECMAScript 5: Object.defineProperty()</h2>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  var book = { _year: 2004, edition: 1 };
+  Object.defineProperty(book, “year”,
+  {
+    get: function(){ return this._year; },
+    set: function(newValue){
+      if (newValue > 2004) {
+        this._year = newValue;
+        <b>this.edition += newValue - 2004;</b>
+      }
+    }
+  });
+  book.year = 2005;
+  alert(book.edition); //2
+        </pre>
+      </article>
+      <article>
+        <ul class="build">
+          <li>
+            <p>It’s not necessary to assign both a getter and a setter. Assigning just a getter means that the property cannot be written to and attempts to do so will be ignored.</p>
+          </li>
+        </ul>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>It’s also possible to retrieve the property descriptor for a given property by using the ECMAScript 5 Object.getOwnPropertyDescriptor() method. This method accepts two arguments: the object on which the property resides and the name of the property whose descriptor should be retrieved. The return value is an object with properties for configurable, enumerable, get, and set for accessor properties or configurable, enumerable, writable, and value for data properties.</p>
+          </li>
+          <li>
+            <p>Why enumerable and configurable properties are false, why aren’t they true like the information above ?  Remember this line : “this is true for all properties defined directly on an object.” In the nearest example, we didn’t define it directly on an object, we defined it through Object.defineProperties method, and that’s why they are false. Just console it out : </p>
+          </li>
+          <li>
+            <p>See ? except get and set are functions, enumerable and configurable are false.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>ECMAScript 5 Object.getOwnPropertyDescriptor()</h2>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  var descriptor = Object.getOwnPropertyDescriptor(book, "_year");
+  alert(descriptor.value);          //2004
+  alert(descriptor.configurable);   //false
+  alert(typeof descriptor.get);     //"undefined"
+  var descriptor = Object.getOwnPropertyDescriptor(book, "year");
+  alert(descriptor.value);          //undefined
+  alert(descriptor.enumerable);     //false
+  alert(typeof descriptor.get);     //"function"
+        </pre>
+      </article>
+      <article>
+        <ul class="build">
+          <li>
+            <p>It’s not necessary to assign both a getter and a setter. Assigning just a getter means that the property cannot be written to and attempts to do so will be ignored.</p>
+          </li>
+        </ul>
+      </article>
+      <article class="build">
+        <pre class="prettyprint" data-lang="javascript">
+  console.log(descriptor);
+  <b>Object {get: function, set: function, enumerable: false, configurable: false }</b>
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>Here, the function Person() accepts arguments with which to build an object with a method run and three properties. The function can be called any number of times with different arguments and will still return an object that has three properties and one method. But like what you see, we don’t know what is person1 really, the issue of object identification (what type of object an object is).</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup class="build">
+        <h2>OBJECT CREATION</h2>
+        <h3>The Factory Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="build">
+        <p>The factory pattern is a well-known design pattern used in software engineering to abstract away the process of creating specific objects</p>
+        <br>
+        <pre class="prettyprint" data-lang="javascript">
+  function Person(name, age, job) {
+  return {
+      name : name,
+      age  : age,
+      job  : job,
+      run  : function() { alert(name + " is running!"); }
+    }
+  }
+  var person1 = Person("Hans")
+  person1.run();
+  <b>person1 instanceof Object;   //true</b>
+  <b>person1 instanceof Person;   //false</b>
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <article>
+      <hgroup>
+        <h2>Meme Dinosaur</h2>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="centered">
+        <div>
+          <img src="images/demos/error_factory.jpg" height="414" width="500" alt="">
+        </div>
+        <br>
+        <p class="bold">"Oh my god, I’m not a person ... but I can run. What am I really ?"</p>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>constructors in ECMAScript are used to create specific types of objects. There are native constructors, such as Object and Array, which are available automatically in the execution environment at runtime. It is also possible to define custom constructors that define properties and methods for your own type of object.</p>
+          </li>
+          <li>
+            <p>The differences between the function Person above and the function Person in previous example are :</p>
+          </li>
+          <li>
+            <p>By convention, constructor functions always begin with an uppercase letter, whereas non-constructor functions begin with a lowercase letter. This convention is borrowed from other OO languages and helps to distinguish function use in ECMAScript, since constructors are simply functions that create objects.</p>
+          </li>
+          <li>
+            <p>At the end of the preceding example, person1 and person2 are each filled with a different instance of Person. Each of these objects has a constructor property that points back to Person, as follows:</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Constructor Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="build">
+        <pre class="prettyprint" data-lang="javascript">
+  function <b>Person</b>(name, age, job){
+    this.name = name;
+    this.age = age;
+    this.job = job;
+    this.sayName = function(){ alert(this.name); };
+  }
+  var person1 = new Person(“Le Roi”, 27, “Super Star Singer”);
+  var person2 = new Person(“Le Hai Thinh”, 26, “Psychology Doctor”);
+  <b>alert(person1.constructor == Person); //true </b>
+  <b>alert(person2.constructor == Person); //true</b>
+        </pre>
+      </article>
+      <article>
+        <ul class="build">
+          <li>
+            <p>There is no object being created explicitly.</p>
+          </li>
+          <li><p>The properties and method are assigned directly onto the this object.</p></li>
+          <li><p>There is no return statement.</p></li>
+        </ul>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>The constructor property was originally intended for use in identifying the object type. However, the instanceof operator is considered to be a safer way of determining type. Each of the objects in this example is considered to be both an instance of Object and an instance of Person, as indicated by using the instanceof operator like this:</p>
+          </li>
+          <li>
+            <p>The only difference between constructor functions and other functions is the way in which they are called. Constructors are, after all, just functions; there’s no special syntax to define a constructor that automatically makes it behave as such. Any function that is called with the new operator acts as a constructor, whereas any function called without it acts just as you would expect a normal function call to act.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Constructor Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="build">
+        <pre class="prettyprint" data-lang="javascript">
+  alert(person1 instanceof Object); //true
+  alert(person1 instanceof Person); //true
+  alert(person2 instanceof Object); //true
+  alert(person2 instanceof Person); //true
+        </pre>
+      </article>
+      <article>
+        <ul class="build">
+          <li>
+            <p>All custom objects inherit from Object.</p>
+          </li>
+          <li><p>Constructors are just functions</p></li>
+          <li><p>Function that is called with the <b>new</b> operator acts as a constructor</p></li>
+        </ul>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>At this example, calling a function with call method has something to talk about. o variable now has every properties and methods like person, but when we check what it is with instanceof : </p>
+          </li>
+          <li>
+            <p>Why is this? Just because this is a kind of The Factory Pattern but not in a factory function.</p>
+          </li>
+          <li>
+            <p>The Constructor Pattern works well, but there is a problem with it</p>
+          </li>
+          <li>
+            <p>Function Person can be changed like this : </p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Constructor Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  //use as a constructor
+  var person = new Person("Le Roi", 26, "Singer");
+  person.sayName(); //"Le Roi"
+
+  //call as a function
+  Person("Le Tuon Roi", 27, "Graphic Designer of NAU"); //adds to window
+  window.sayName(); //"Le Tuon Roi"
+
+  //call in the scope of another object
+  var o = new Object();
+  Person.call(o, "Kristen", 25, "Nurse");
+  o.sayName(); //"Kristen"
+
+  <b>o instanceof Person // "false"</b>
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>So, in the previous example, both person1 and person2 have a method called sayName(), but those methods are not the same instance of Function. Because everytimes we create an instance of Person, we create difference instances of Function object which is stored in each sayName property. So when we check these methods like this : </p>
+          </li>
+          <li>
+            <p>It doesn’t make sense to have two instances of Function that do the same thing, so we can move the function definition outside of the constructor, as follows:</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Constructor Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  function Person(name, age, job){ this.name = name;
+    this.age = age;
+    this.job = job;
+    this.sayName = new Function(“alert(this.name)”);  //logical equivalent
+  }
+
+  <b>alert(person1.sayName == person2.sayName); //false</b>
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>This solves the problem of having duplicate functions that do the same thing but also creates some clutter in the global scope by introducing a function that can realistically be used only in relation to an object. If the object needed multiple methods, that would mean multiple global functions, and perhaps that is a mess and not nice.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Constructor Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  function Person(name, age, job){
+    this.name = name;
+    this.age = age;
+    this.job = job;
+    this.sayName = sayName;
+  }
+  function sayName(){
+    alert(this.name);
+  }
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide class="thank-you-slide segue nobackground">
+    <article class="flexbox vleft auto-fadein">
+      <h2>&lt;Thank You!&gt;</h2>
+      <p>Important contact information goes here.</p>
+    </article>
+    <p class="auto-fadein" data-config-contact>
+      <!-- populated from slide_config.json -->
+    </p>
+  </slide>
+
+  <slide class="logoslide dark nobackground">
+    <article class="flexbox vcenter">
+      <span><img src="images/logo.png"></span>
+    </article>
+  </slide>
+
+  <slide class="backdrop"></slide>
+
+</slides>
+<!--[if IE]>
+  <script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+  <script>CFInstall.check({mode: 'overlay'});</script>
+<![endif]-->
+</body>
+</html>
