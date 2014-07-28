@@ -675,8 +675,8 @@
   }
   var person1 = new Person(“Le Roi”, 27, “Super Star Singer”);
   var person2 = new Person(“Le Hai Thinh”, 26, “Psychology Doctor”);
-  <b>alert(person1.constructor == Person); //true </b>
-  <b>alert(person2.constructor == Person); //true</b>
+  <b>alert(person1.constructor === Person); //true </b>
+  <b>alert(person2.constructor === Person); //true</b>
         </pre>
       </article>
       <article>
@@ -815,7 +815,7 @@
     this.sayName = new Function(“alert(this.name)”);  //logical equivalent
   }
 
-  <b>alert(person1.sayName == person2.sayName); //false</b>
+  <b>alert(person1.sayName === person2.sayName); //false</b>
         </pre>
       </article>
     </article>
