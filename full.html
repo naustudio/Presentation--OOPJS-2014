@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">-->
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+  <!--This one seems to work all the time, but really small on ipad-->
+  <!--<meta name="viewport" content="initial-scale=0.4">-->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" media="all" href="theme/css/default.css">
+  <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="theme/css/phone.css">
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->
+  <script data-main="js/slides" src="js/require-1.0.8.min.js"></script>
+</head>
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="logoslide nobackground">
+    <article class="flexbox vcenter">
+      <span><img src="images/logo.png"></span>
+    </article>
+  </slide>
+
+  <slide class="title-slide segue nobackground">
+    <aside class="gdbar"><img src="images/logo.png"></aside>
+    <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+    </hgroup>
+  </slide>
+
+  <slide classs="contents">
+    <hgroup>
+      <h2>Contents</h2>
+    </hgroup>
+    <article>
+      <ul class="build">
+        <li>UNDERSTANDING OBJECT
+          <ul>
+            <li>What is Object ?</li>
+            <li>Properties</li>
+          </ul>
+        </li>
+        <li>OBJECT CREATION
+          <ul>
+            <li>The Factory Pattern</li>
+            <li>The Constructor Pattern</li>
+            <li>The Prototype Pattern</li>
+            <li>Combination Constructor/Prototype Pattern</li>
+          </ul>
+        </li>
+        <li>INHERITANCE
+          <ul>
+            <li>Prototype Chaining</li>
+            <li>Constructor Stealing</li>
+            <li>Combination Inheritance</li>
+            <li>Prototypal Inheritance</li>
+          </ul>
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>Before we talk about Object, maybe we should talk a lil bit about ECMA-262, Because we will maybe use this word many times in this presentation.</p>
+          </li>
+          <li>
+            <p>This is a standard defines the ECMAScript scripting language, and for someone who is still have no idea what is ECMAScript : the scripting language standardized by Ecma International in the ECMA-262</p>
+          </li>
+          <li>
+            <p>ECMA-262 defines an object as an "unordered collection of properties each of which contains a primitive value, object, or function.". Each property or method is identified by a name that is mapped to a value.</p>
+          </li>
+          <li>
+            <p>Actually, It’s nothing more than a grouping of name-value pairs where the value may be data or a function.</p>
+          </li>
+          <li>
+            <p>Just take a look at this example : </p>
+          </li>
+          <li>
+            <p>But why does this work? I mean, what actually happened underground when we add a name-value pair ( a property ) to an object and the result is the object has the property with name and value inside?</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>1. What is Object ? </h2>
+    </hgroup>
+    <article>
+      <ul class="build">
+        <li>ECMA-262
+          <p>a standard defines the ECMAScript scripting language</p>
+        </li>
+        <li>ECMAScript
+          <p>the scripting language standardized by Ecma International in the ECMA-262</p>
+        </li>
+        <li>
+          <p>What is object ? : "Unordered collection of properties each of which contains a primitive value, object, or function."</p>
+        </li>
+        <li>name-value pairs </li>
+      </ul>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  var person = {
+    name: "Hans",
+    age: 26,
+    job: "Super Junior Developer",
+    sayName: function(){
+        console.log(this.name);
+    }
+  };
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>When a property is first added to an object, JavaScript uses an internal method called [[Put]] on the object. </p>
+          </li>
+          <li>
+            <p>The [[Put]] method creates a spot in the object to store the property. The result of calling [[Put]] is the creation of an own property (remember this) on the object.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>1. What is Object ? </h2>
+    </hgroup>
+    <article>
+      <ul class="build">
+        <li>[[Put]] ( first time )
+          <ul class="build">
+            <li>creates a spot in the object to store the property</li>
+            <li>The result of calling [[Put]] is the creation of an <span class="italic bold">own property</span> on the object.</li>
+          </ul>
+          <br>
+        </li>
+        <li>[[Set]]
+          <ul class="build">
+            <li>This operation replaces the current value of the property with the new one.</li>
+          </ul>
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>But there is a difference if it is the first time or not. When a new value is assigned to an existing property, a separate operation called [[Set]] takes place. This operation replaces the current value of the property with the new one.</p>
+          </li>
+          <li>
+            <p>Where do [[Put]] method and [[Set]] operation come from ? May be in Javascript Engine or in Universe. Try to figure it out after this presentation ( if u r so fucking curious … and I love it ).</p>
+          </li>
+          <li>
+            <p>The person variable doesn’t contain the object actually, it contains a point, and this point points to the actual object. So when a variable is assigned an object like this : </p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  var person = {
+    name: "Hans",
+    age: 26,
+    job: "Super Junior Developer",
+    sayName: function(){
+        console.log(this.name);
+    }
+  };
+  person.name = "Le Roi";
+        </pre>
+      </article>
+      <article class="build centered">
+        <img class="build" src="images/demos/put_set.png" width="750" alt="">
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>This one means the variables share a pointer to point to an object. So remember when we interact with an object, it doesn’t mean that we are interacting it directly.</p>
+          </li>
+          <li>
+            <p>By the way, I think we should clear confused definitions like reference, instance. What is instance ? What is reference ? Like I said before, I used pointer, but I should use reference instead.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  var object1, object2;
+  object1 = {
+    a: 3.14159
+  }
+  <b>object2 = object1;</b>
+        </pre>
+      </article>
+      <article class="build centered">
+        <p><br>The real picture is : <br><br></p>
+      </article>
+      <article class="build centered">
+        <img class="build" src="images/demos/ObjectExamle01x2.png" alt="">
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>So let’s get back to the example :</p>
+          </li>
+          <li>
+            <p>Now we say it again : both object1 and object2 hold references to the same object with data : { a: 3.14159 }</p>
+          </li>
+          <li>
+            <p>Now we go deep inside the properties </p>
+          </li>
+          <li>
+            <p>There are two types of properties: Data properties and Accessor properties. </p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+    <article>
+      <hgroup>
+        <h2>What is instance and references ? :S </h2>
+        <br>
+      </hgroup>
+      <article>
+        <ul class="build">
+          <li>A variable will hold a reference to an instance of an object.</li>
+          <li>The actual object is an instance</li>
+        </ul>
+      </article>
+      <article class="build centered">
+        <p><br><img class="build" src="images/demos/ObjectExamle01x2.png" alt=""></p>
+      </article>
+    </article>
+  </slide>
+
+
+  <slide>
+
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>[[Configurable]] : Indicates if the property may be redefined by removing the property via delete, changing the property’s attributes, or changing the property into an accessor property. By default, this is true for all properties defined directly on an object, as in the previous example.</p>
+          </li>
+          <li>
+            <p>[[Enumerable]] : Indicates if the property will be returned in a for-in loop. By default, this is true for all properties defined directly on an object, as in the previous example.</p>
+          </li>
+          <li>
+            <p>[[Writable]] — Indicates if the property’s value can be changed. By default, this is true for all properties defined directly on an object, as in the previous example.</p>
+          </li>
+          <li>
+            <p>[[Value]] — Contains the actual data value for the property. This is the location from which the property’s value is read and the location to which new values are saved. The default value for this attribute is undefined</p>
+          </li>
+          <li>
+            <p>So in the previous example, the property called a is created and a value of 3.14159 is assigned. That means [[Value]] is set to 3.14159, and any changes to that value are stored in this location.</p>
+          </li>
+          <li>
+            <p>How about the other internal attributes? We can change them though a method of ECMAScript 5: Object.defineProperty().</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup class="build">
+        <h2>Properties</h2>
+        <h3>Data properties</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <ul class="build">
+        <li>Data properties contain a single location for a data value. Values are read from and written to this location</li>
+        <li>Data properties have four attributes describing their behavior :
+          <ul class="build">
+            <li>[[Configurable]]</li>
+            <li>[[Enumerable]]</li>
+            <li>[[Writable]]</li>
+            <li>[[Value]]</li>
+          </ul>
+        </li>
+        <li>
+          <p>[[Configurable]], [[Enumerable]], [[Writable]] are true <b>for all properties defined directly on an object</b>, as in the previous example.</p>
+        </li>
+        <li>
+          <p>[[Value]] attribute is set to the assigned value.</p>
+        </li>
+        <li>
+          <p>Object.defineProperty().</p>
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>This method accepts three arguments: the object on which  the property should be added or modified, the name of the property, and a descriptor object… like this : </p>
+          </li>
+          <li>
+            <p>That’s it, but there is something you should know that setting configurable to false means that the property cannot be removed from the object. Calling delete on the property has no effect in nonstrict mode and throws an error in strict mode. Additionally, once a property has been defined as nonconfigurable, it cannot become configurable again. Any attempt to call Object.defineProperty() and change any attribute other than writable causes an error:</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>ECMAScript 5: Object.defineProperty()</h2>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  var person1 = {};
+
+  Object.defineProperty(person1, "name", {
+    value: "Neo",
+    enumerable: true,
+    configurable: true,
+    writable: true
+  });
+        </pre>
+      </article>
+      <article>
+        <ul class="build">
+          <li>
+            <p>Setting configurable to false means that the property cannot be removed from the object.</p>
+          </li>
+          <li>
+            <p>Once a property has been defined as nonconfigurable, it cannot become configurable again.</p>
+          </li>
+        </ul>
+      </article>
+    </article>
+  </slide>
+
+
+  <slide>
+
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>This method accepts three arguments: the object on which  the property should be added or modified, the name of the property, and a descriptor object… like this : </p>
+          </li>
+          <li>
+            <p>That’s it, but there is something you should know that setting configurable to false means that the property cannot be removed from the object. Calling delete on the property has no effect in nonstrict mode and throws an error in strict mode. Additionally, once a property has been defined as nonconfigurable, it cannot become configurable again. Any attempt to call Object.defineProperty() and change any attribute other than writable causes an error:</p>
+          </li>
+          <li>
+            <p>That means you can call Object.defineProperty() multiple times for the same property, but there are limits once configurable has been set to false</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>ECMAScript 5: Object.defineProperty()</h2>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  var person = {};
+  Object.defineProperty(person, "name", {
+    <b>configurable: false,</b>
+    value: "Neo"
+  });
+
+  Object.defineProperty(person, "name", {
+    <b>configurable: true,</b> // ← error here
+    value: "Neo"
+  }); // <b>this will throw an error</b>
+        </pre>
+      </article>
+      <article>
+        <ul class="build">
+          <li>
+            <p>Note : Internet Explorer 8 was the first version to implement Object .defineProperty(). Unfortunately, the implementation is extremely limited. This method can be used only on DOM objects and can create only accessor properties.</p>
+          </li>
+        </ul>
+      </article>
+    </article>
+  </slide>
+
+
+  <slide>
+
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>Accessor Properties contain a combination of a getter function and a setter function (though both are not necessary). When an accessor property is read from, the getter function is called, and it’s the function’s responsibility to return a valid value; when an accessor property is written to, a function is called with the new value, and that function must decide how to react to the data. </p>
+          </li>
+          <li><p>[[Configurable]] — Indicates if the property may be redefined by removing the property via delete, changing the property’s attributes, or changing the property into a data property. By default, this is true for all properties defined directly on an object.</p></li>
+          <li><p>[[Enumerable]] — Indicates if the property will be returned in a for-in loop. By default, this is true for all properties defined directly on an object.</p></li>
+          <li><p>[[Get]] — The function to call when the property is read from. The default value is undefined.</p></li>
+          <li><p>[[Set]] — The function to call when the property is written to. The default value is undefined.</p></li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup class="build">
+        <h2>Properties</h2>
+        <h3>Accessor properties</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <ul class="build">
+        <li>Accessor Properties contain a combination of a getter function and a setter function (though both are not necessary).</li>
+        <li>Accessor properties have four attributes:
+          <ul class="build">
+            <li>[[Configurable]]</li>
+            <li>[[Enumerable]]</li>
+            <li>[[Get]]</li>
+            <li>[[Set]]</li>
+          </ul>
+        </li>
+        <li>
+          <p>[[Configurable]], [[Enumerable]] are true <b>for all properties defined directly on an object</b>, as in the previous example.</p>
+        </li>
+        <li>
+          <p>When an accessor property is read from, the getter function [[Get]] is called</p>
+        </li>
+        <li>
+          <p>when an accessor property is written to, the setter function [[Set]] is called.</p>
+        </li>
+        <li>
+          <p>It is not possible to define an accessor property explicitly so you must use Object.defineProperty().</p>
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>This method accepts three arguments: the object on which  the property should be added or modified, the name of the property, and a descriptor object… like this : </p>
+          </li>
+          <li>
+            <p>So there are some javascript frameworks like EmberJS and BackboneJS both use accessors (getters and setters) on wrapped objects for listening events when the object have changes, but other ones use dirty-checking, but we should discuss this in another time cause I dun wanna go so far away from our topic, OOP.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>ECMAScript 5: Object.defineProperty()</h2>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  var book = { _year: 2004, edition: 1 };
+  Object.defineProperty(book, “year”,
+  {
+    get: function(){ return this._year; },
+    set: function(newValue){
+      if (newValue > 2004) {
+        this._year = newValue;
+        <b>this.edition += newValue - 2004;</b>
+      }
+    }
+  });
+  book.year = 2005;
+  alert(book.edition); //2
+        </pre>
+      </article>
+      <article>
+        <ul class="build">
+          <li>
+            <p>It’s not necessary to assign both a getter and a setter. Assigning just a getter means that the property cannot be written to and attempts to do so will be ignored.</p>
+          </li>
+        </ul>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>It’s also possible to retrieve the property descriptor for a given property by using the ECMAScript 5 Object.getOwnPropertyDescriptor() method. This method accepts two arguments: the object on which the property resides and the name of the property whose descriptor should be retrieved. The return value is an object with properties for configurable, enumerable, get, and set for accessor properties or configurable, enumerable, writable, and value for data properties.</p>
+          </li>
+          <li>
+            <p>Why enumerable and configurable properties are false, why aren’t they true like the information above ?  Remember this line : “this is true for all properties defined directly on an object.” In the nearest example, we didn’t define it directly on an object, we defined it through Object.defineProperties method, and that’s why they are false. Just console it out : </p>
+          </li>
+          <li>
+            <p>See ? except get and set are functions, enumerable and configurable are false.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>ECMAScript 5 Object.getOwnPropertyDescriptor()</h2>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  var descriptor = Object.getOwnPropertyDescriptor(book, "_year");
+  alert(descriptor.value);          //2004
+  alert(descriptor.configurable);   //true
+  alert(typeof descriptor.get);     //"undefined"
+  var descriptor = Object.getOwnPropertyDescriptor(book, "year");
+  alert(descriptor.value);          //undefined
+  alert(descriptor.enumerable);     //false
+  alert(typeof descriptor.get);     //"function"
+        </pre>
+      </article>
+      <article>
+        <ul class="build">
+          <li>
+            <p>It’s not necessary to assign both a getter and a setter. Assigning just a getter means that the property cannot be written to and attempts to do so will be ignored.</p>
+          </li>
+        </ul>
+      </article>
+      <article class="build">
+        <pre class="prettyprint" data-lang="javascript">
+  console.log(descriptor);
+  <b>Object {get: function, set: function, enumerable: false, configurable: false }</b>
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>Here, the function Person() accepts arguments with which to build an object with a method run and three properties. The function can be called any number of times with different arguments and will still return an object that has three properties and one method. But like what you see, we don’t know what is person1 really, the issue of object identification (what type of object an object is).</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup class="build">
+        <h2>OBJECT CREATION</h2>
+        <h3>The Factory Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="build">
+        <p>The factory pattern is a well-known design pattern used in software engineering to abstract away the process of creating specific objects</p>
+        <br>
+        <pre class="prettyprint" data-lang="javascript">
+  function Person(name, age, job) {
+  return {
+      name : name,
+      age  : age,
+      job  : job,
+      run  : function() { alert(name + " is running!"); }
+    }
+  }
+  var person1 = Person("Hans")
+  person1.run();
+  <b>person1 instanceof Object;   //true</b>
+  <b>person1 instanceof Person;   //false</b>
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <article>
+      <hgroup>
+        <h2>Meme Dinosaur</h2>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="centered">
+        <div>
+          <img src="images/demos/error_factory.jpg" height="414" width="500" alt="">
+        </div>
+        <br>
+        <p class="bold">"Oh my god, I’m not a person ... but I can run. What am I really ?"</p>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>constructors in ECMAScript are used to create specific types of objects. There are native constructors, such as Object and Array, which are available automatically in the execution environment at runtime. It is also possible to define custom constructors that define properties and methods for your own type of object.</p>
+          </li>
+          <li>
+            <p>The differences between the function Person above and the function Person in previous example are :</p>
+          </li>
+          <li>
+            <p>By convention, constructor functions always begin with an uppercase letter, whereas non-constructor functions begin with a lowercase letter. This convention is borrowed from other OO languages and helps to distinguish function use in ECMAScript, since constructors are simply functions that create objects.</p>
+          </li>
+          <li>
+            <p>At the end of the preceding example, person1 and person2 are each filled with a different instance of Person. Each of these objects has a constructor property that points back to Person, as follows:</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Constructor Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="build">
+        <pre class="prettyprint" data-lang="javascript">
+  function <b>Person</b>(name, age, job){
+    this.name = name;
+    this.age = age;
+    this.job = job;
+    this.sayName = function(){ alert(this.name); };
+  }
+  var person1 = new Person(“Le Roi”, 27, “Super Star Singer”);
+  var person2 = new Person(“Le Hai Thinh”, 26, “Psychology Doctor”);
+  <b>alert(person1.constructor == Person); //true </b>
+  <b>alert(person2.constructor == Person); //true</b>
+        </pre>
+      </article>
+      <article>
+        <ul class="build">
+          <li>
+            <p>There is no object being created explicitly.</p>
+          </li>
+          <li><p>The properties and method are assigned directly onto the this object.</p></li>
+          <li><p>There is no return statement.</p></li>
+        </ul>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>The constructor property was originally intended for use in identifying the object type. However, the instanceof operator is considered to be a safer way of determining type. Each of the objects in this example is considered to be both an instance of Object and an instance of Person, as indicated by using the instanceof operator like this:</p>
+          </li>
+          <li>
+            <p>The only difference between constructor functions and other functions is the way in which they are called. Constructors are, after all, just functions; there’s no special syntax to define a constructor that automatically makes it behave as such. Any function that is called with the new operator acts as a constructor, whereas any function called without it acts just as you would expect a normal function call to act.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Constructor Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="build">
+        <pre class="prettyprint" data-lang="javascript">
+  alert(person1 instanceof Object); //true
+  alert(person1 instanceof Person); //true
+  alert(person2 instanceof Object); //true
+  alert(person2 instanceof Person); //true
+        </pre>
+      </article>
+      <article>
+        <ul class="build">
+          <li>
+            <p>All custom objects inherit from Object.</p>
+          </li>
+          <li><p>Constructors are just functions</p></li>
+          <li><p>Function that is called with the <b>new</b> operator acts as a constructor</p></li>
+        </ul>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>At this example, calling a function with call method has something to talk about. o variable now has every properties and methods like person, but when we check what it is with instanceof : </p>
+          </li>
+          <li>
+            <p>Why is this? Just because this is a kind of The Factory Pattern but not in a factory function.</p>
+          </li>
+          <li>
+            <p>The Constructor Pattern works well, but there is a problem with it</p>
+          </li>
+          <li>
+            <p>Function Person can be changed like this : </p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Constructor Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  //use as a constructor
+  var person = new Person("Le Roi", 26, "Singer");
+  person.sayName(); //"Le Roi"
+
+  //call as a function
+  Person("Le Tuon Roi", 27, "Graphic Designer of NAU"); //adds to window
+  window.sayName(); //"Le Tuon Roi"
+
+  //call in the scope of another object
+  var o = new Object();
+  Person.call(o, "Kristen", 25, "Nurse");
+  o.sayName(); //"Kristen"
+
+  <b>o instanceof Person // "false"</b>
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>So, in the previous example, both person1 and person2 have a method called sayName(), but those methods are not the same instance of Function. Because everytimes we create an instance of Person, we create difference instances of Function object which is stored in each sayName property. So when we check these methods like this : </p>
+          </li>
+          <li>
+            <p>It doesn’t make sense to have two instances of Function that do the same thing, so we can move the function definition outside of the constructor, as follows:</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Constructor Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  function Person(name, age, job){ this.name = name;
+    this.age = age;
+    this.job = job;
+    this.sayName = new Function(“alert(this.name)”);  //logical equivalent
+  }
+
+  <b>alert(person1.sayName == person2.sayName); //false</b>
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>This solves the problem of having duplicate functions that do the same thing but also creates some clutter in the global scope by introducing a function that can realistically be used only in relation to an object. If the object needed multiple methods, that would mean multiple global functions, and perhaps that is a mess and not nice.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Constructor Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  function Person(name, age, job){
+    this.name = name;
+    this.age = age;
+    this.job = job;
+    this.sayName = sayName;
+  }
+  function sayName(){
+    alert(this.name);
+  }
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>Each function is created with a prototype property, which is an object containing properties and methods that should be available to instances of a particular reference type.
+            </p>
+            <p>This object is a prototype for the object to be created once the constructor is called.
+            <p>The benefit of using the prototype is that all of its properties and methods are shared among object instances.</p>
+            <p>Instead of assigning object information in the constructor, they can be assigned directly to the prototype.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Prototype Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <ul class="build">
+        <li>
+          <p>Each function is created with a prototype property, which is an object containing properties and methods that should be available to instances of a particular reference type.</p>
+        </li>
+        <li>
+          <p>This object is a prototype for the object to be created once the constructor is called. </p>
+        </li>
+        <li><p>All of its properties and methods are shared among object instances.</p></li>
+        <li>
+          <p>By default, all prototypes automatically get a property called constructor that points back to the function on which it is a property</p>
+        </li>
+        <li>
+          <p>There is no standard way to access [[Prototype]] from script, but Firefox, Safari, and Chrome all support a property on every object called __proto__., in other implementations, this property is completely hidden from script.</p>
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Prototype Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <pre class="prettyprint" data-lang="javascript">
+  function Person(){ }
+  Person.prototype.name = "Hans";
+  Person.prototype.age = 26;
+  Person.prototype.job = "Super Junior";
+  Person.prototype.sayName = function(){
+    alert(this.name);
+  };
+
+  var person1 = new Person();
+  person1.sayName(); //"Hans"
+
+  var person2 = new Person();
+  person2.sayName(); //"Hans"
+
+  alert(person1.sayName == person2.sayName); //true
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>Consider the previous example using the Person constructor and Person.prototype. The relationship between the objects in the example is shown in the picture under.</p>
+          </li>
+          <li>
+            <p>Each instance of Person, person1, and person2 has internal properties that point back to Person.prototype only. That Person.prototype points to the prototype object but Person.prototype.constructor points back to Person. The prototype contains the constructor property and the other properties that were added.</p>
+          </li>
+          <li>
+            <p>Whenever a property is accessed for reading on an object, a search is started to find a property with that name. The search begins on the object instance itself. </p>
+          </li>
+          <li>
+            <p>If a property with the given name is found on the instance, then that value is returned; if the property is not found, then the search continues up the pointer to the prototype, and the prototype is searched for a property with the same name. </p>
+          </li>
+          <li>
+            <p>If the property is found on the prototype, then that value is returned. So, when person1.sayName() is called, a two-step process happens. First, the JavaScript engine asks, “Does the instance person1 have a property called sayName?” The answer is no, so it continues the search and asks, “Does the person1 prototype have a property called sayName?” The answer is yes, so the function stored on the prototype is accessed. </p>
+          </li>
+          <li>
+            <p>When person2.sayName() is called, the same search executes, ending with the same result. This is how prototypes are used to share properties and methods among multiple object instances</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Prototype Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="centered">
+        <img src="images/demos/ObjectExamle02.png" height="390" width="700">
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>Once a property is added to the object instance, it shadows any properties of the same name on the prototype, which means that it blocks access to the property on the prototype without altering it. And when we remove the property in instance, it still looks for the property in the prototype.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Prototype Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="smaller">
+        <pre class="prettyprint" data-lang="javascript">
+  function Person(){ }
+  Person.prototype.name = “Thang”;
+  Person.prototype.age = 26;
+  Person.prototype.job = “Minior”;
+  Person.prototype.sayName = function(){
+    alert(this.name);
+  };
+  var person1 = new Person();
+  var person2 = new Person();
+
+  <b>person1.name = “Le Roi”;</b>
+
+  <b>alert(person1.name);   //”Le Roi” - from instance</b>
+  alert(person2.name);   //” Thang” - from prototype
+
+  <b>delete person1.name;</b>
+  <b>alert(person1.name);   //”Thang” - from the prototype</b>
+
+  // Yeah, we should remove Le Roi, I dun like that name.
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>So, to check a propery from instance or from prototype, we have a method named hasOwnProperty()</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Prototype Pattern</h3>
+        <h4><b>hasOwnProperty()</b></h4>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article>
+        <p class="build">Returns true only if a property of the given name exists on the object instance, as in this example:</p>
+        <br>
+      </article>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  alert(person1.<b>hasOwnProperty</b>(“name”));  //false
+  person1.name = “Trang”;
+  alert(person1.name); //”Trang” - from instance
+  alert(person1.<b>hasOwnProperty</b>(“name”));  //true
+        </pre>
+      </article>
+
+      <article class="build">
+        <hgroup>
+          <h4><b>in operator</b></h4>
+        </hgroup>
+      </article>
+      <br>
+      <article class="build">
+        <p>Returns true when a property of the given name is accessible by the object, which is to say that the property may exist on the instance or on the prototype.</p>
+      </article>
+      <br>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  alert(person2.hasOwnProperty(“name”)); //false
+  alert(“name” in person2); //true
+        </pre>
+      </article>
+
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>Another way to define properties on prototype is simply overwrite the prototype with an object literal that contains all of the properties and methods, as in this example:</p>
+          </li>
+          <li>
+            <p>But there is a problem, the constructor property no longer points to Person, it points to Object exactly because we overwrite with an object and now its constructor is the object constructor.</p>
+          </li>
+          <li>
+            <p>If the constructor’s value is important, you can set it specifically back to the appropriate value</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Prototype Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  function Person(){
+  }
+  Person.prototype = {
+      name : “Nicholas”,
+      age : 29,
+      job : “Software Engineer”,
+      sayName : function () {
+          alert(this.name);
+      }
+  };
+        </pre>
+      </article>
+
+      <article class="build">
+        <p><b>But</b></p>
+      </article>
+      <br>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  var friend = new Person();
+  alert(friend instanceof Object); //true
+  alert(friend instanceof Person); //true
+  <b>alert(friend.constructor === Person); //false</b>
+  <b>alert(friend.constructor === Object); //true</b>
+        </pre>
+      </article>
+
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>Native constructor properties are not enumerable by default, so if you’re using an ECMAScript 5–compliant JavaScript engine, you may wish to use Object.defineProperty() instead:</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Prototype Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  function Person(){ }
+  Person.prototype = {
+    constructor: Person,
+    name : “Nicholas”,
+    age : 29,
+    job : “Software Engineer”,
+    sayName : function () {
+      alert(this.name);
+    }
+  };
+        </pre>
+      </article>
+
+      <article class="build">
+        <p>Using <b>Object.defineProperty()</b></p>
+      </article>
+      <br>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  //ECMAScript 5 only – restore the constructor
+  Object.defineProperty(Person.prototype, “constructor”, {
+    enumerable: false,
+    value: Person
+  });
+        </pre>
+      </article>
+
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>In this example, a new instance of Person is created before the prototype object is overwritten. When friend.sayName() is called, it causes an error, because the prototype that friend points to doesn’t contain a property of that name. This is what really happens </p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Prototype Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  function Person(){
+  }
+  var friend = new Person();
+  Person.prototype = {
+    constructor: Person,
+    name : “Nicholas”,
+    age : 29,
+    job : “Software Engineer”,
+    sayName : function () {
+      alert(this.name);
+    }
+  };
+  friend.sayName(); //error
+        </pre>
+      </article>
+      <article class="build">
+        <p><b>Why it throws error ?</b></p>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>Overwriting the prototype on the constructor means that new instances will reference the new prototype while any previously existing object instances still reference the old prototype</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Prototype Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="build centered">
+        <img src="images/demos/ObjectExamle03.png" height="400" width="500" alt="">
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>All properties on the prototype are shared among instances. Properties that contain primitive values also tend to work well, as shown in the previous example, where it’s possible to hide the prototype property by assigning a property of the same name to the instance. </p>
+          </li>
+          <li>
+            <p>The real problem occurs when a property contains a reference value. Consider the following example:</p>
+          </li>
+          <li>
+            <p>Because the friends array exists on Person.prototype, not on person1, the changes made are also reflected on person2.friends (which points to the same array). </p>
+          </li>
+          <li>
+            <p>If the intention is to have an array shared by all instances, then this outcome is okay. Typically, though, instances want to have their own copies of all properties. This is why the prototype pattern is rarely used on its own.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>The Prototype Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  function Person(){}
+  Person.prototype = {
+    constructor: Person,
+    name : “Le Roi”,
+    age : 29,
+    job : “Singer”,
+    friends : [“Thuy TOP”, “Phuong Trinh”],
+    sayName : function () {
+      alert(this.name);
+    }
+  };
+  var person1 = new Person();
+  var person2 = new Person();
+
+  person1.friends.push(“Phi Thanh Van”);
+
+  alert(person1.friends);    //   ”Thuy TOP,Phuong Trinh,Phi Thanh Van”
+  alert(person2.friends);    //   ”Thuy TOP,Phuong Trinh,Phi Thanh Van”
+  alert(person1.friends === person2.friends);  //true
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>The most common way of defining custom types is to combine the constructor and prototype patterns. </p>
+          </li>
+          <li>
+            <p>The constructor pattern defines instance properties, whereas the prototype pattern defines methods and shared properties. With this approach, each instance ends up with its own copy of the instance properties, but they all share references to methods, conserving memory.</p>
+          </li>
+          <li>
+            <p>This pattern allows arguments to be passed into the constructor as well, effectively combining the best parts of each pattern. The previous example can now be rewritten as follows:</p>
+          </li>
+          <li>
+            <p>The hybrid constructor/prototype pattern is the most widely used and accepted practice for defining custom reference types in ECMAScript. Generally speaking, this is the default pattern to use for defining reference types.</p>
+          </li>
+          <li>
+            <p>There are many patterns but we don’t have time so I think we should stop here and if you’re still curious about these patterns, there is a online book you can take a look.</p>
+          </li>
+          <li>
+            <p><a href="http://addyosmani.com/resources/essentialjsdesignpatterns/book/">http://addyosmani.com/resources/essentialjsdesignpatterns/book/</a></p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>OBJECT CREATION</h2>
+        <h3>Combination Constructor/Prototype Pattern</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  function Person(name, age, job){
+    this.name = name;
+    this.age = age;
+    this.job = job;
+    this.friends = [“Trang”, “Vu”];
+  }
+  Person.prototype = {
+    constructor: Person,
+    sayName : function () {
+      alert(this.name);
+    }
+  };
+  var person1 = new Person(“Hans”, 26, “Terrorist”);
+  var person2 = new Person(“Thang”, 23, “Cop”);
+
+  person1.friends.push(“Thang”);
+
+  alert(person1.friends); //” Trang,Vu,Thang”
+  alert(person2.friends); //” Trang,Vu”
+  alert(person1.friends === person2.friends); //false
+  alert(person1.sayName === person2.sayName); //true
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <article>
+      <hgroup>
+        <h2>INHERITANCE</h2>
+        <h3>Prototype Chaining</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article class="centered">
+      <img class="build" src="images/demos/chainning.jpg" height="412" width="540">
+    </article>
+  </slide>
+
+  <slide>
+    <article>
+      <hgroup>
+        <h2>INHERITANCE</h2>
+        <h3>Prototype Chaining</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article class="centered">
+      <p>Oppz ! Not that guy, I mean <b>Prototype Chaining</b>, not him...</p>
+      <br>
+      <img src="images/demos/chaining-tools.jpg" height="350" width="625">
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>
+              ECMA-262 describes prototype chaining as the primary method of inheritance in ECMAScript. </p>
+          </li>
+          <li>
+            <p>
+              The basic idea is to use the concept of prototypes to inherit properties and methods between two reference types. Recall the relationship between constructors, prototypes, and instances: each constructor has a prototype object that points back to the constructor, and instances have an internal pointer to the prototype. </p>
+          </li>
+          <li>
+            <p>What if the prototype were actually an instance of another type? </p>
+          </li>
+          <li>
+            <p>That would mean the prototype itself would have a pointer to a different prototype that, in turn, would have a pointer to another constructor. </p>
+          </li>
+          <li>
+            <p>If that prototype were also an instance of another type, then the pattern would continue, forming a chain between instances and prototypes. This is the basic idea behind prototype chaining.
+            </p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>INHERITANCE</h2>
+        <h3>Prototype Chaining</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  function SuperType(){
+    this.property = true;
+  }
+  SuperType.prototype.getSuperValue = function(){
+     this.property;
+  };
+  function SubType(){
+    this.subproperty = false;
+  }
+
+  //inherit from SuperType
+  SubType.prototype = new SuperType();
+  SubType.prototype.getSubValue = function (){
+    return this.subproperty;
+  };
+  var instance = new SubType();
+  alert(instance.getSuperValue()); //true
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>This code defines two types: SuperType and SubType. Each type has a single property and a single method. The main difference between the two is that SubType inherits from SuperType by creating a new instance of SuperType and assigning it to SubType.prototype. </p>
+          </li>
+          <li>
+            <p>This overwrites the original prototype and replaces it with a new object, which means that all properties and methods that typically exist on an instance of SuperType now also exist on SubType.prototype. After the inheritance takes place, a method is assigned to SubType.prototype, adding a new method on top of what was inherited from SuperType.</p>
+          </li>
+          <li>
+            <p>Instead of using the default prototype of SubType, a new prototype is assigned. That new prototype happens to be an instance of SuperType, so it not only gets the properties and methods of a SuperType instance but also points back to the SuperType’s prototype. So instance points to SubType.prototype, and SubType.prototype points to SuperType.prototype. </p>
+          </li>
+          <li>
+            <p>Note that the getSuperValue() method remains on the SuperType.prototype object, but property ends up on SubType.prototype. That’s because getSuperValue() is a prototype method, and property is an instance property. SubType.prototype is now an instance of SuperType, so property is stored there. Also note that instance.constructor points to SuperType, because the constructor property on the SubType.prototype was overwritten.</p>
+          </li>
+          <li>
+            <p>Prototype chaining extends to the prototype search mechanism described earlier. As you may recall, when a property is accessed in read mode on an instance, the property is first searched for on the instance. If the property is not found, then the search continues to the prototype. </p>
+          </li>
+          <li>
+            <p>When inheritance has been implemented via prototype chaining, that search can continue up the prototype chain. In the previous example, for instance, a call to instance.getSuperValue() results in a three-step search: </p>
+          </li>
+          <li>
+            <p>1) the instance, </p>
+          </li>
+          <li>
+            <p>2) SubType.prototype, and </p>
+          </li>
+          <li>
+            <p>3) SuperType.prototype, where the method is found. </p>
+          </li>
+          <li>
+            <p>The search for properties and methods always continues until the end of the prototype chain is reached.</p>
+          </li>
+          <li>
+            <p>In reality, there is another step in the prototype chain. All reference types inherit from Object by default, which is accomplished through prototype chaining. The default prototype for any function is an instance of Object, meaning that its internal prototype pointer points to Object .prototype.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>INHERITANCE</h2>
+        <h3>Prototype Chaining</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="build centered">
+        <img src="images/demos/ObjectExamle04.png" height="346" width="700">
+      </article>
+    </article>
+  </slide>
+
+
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>SubType inherits from SuperType, and SuperType inherits from Object. When instance .toString() is called, the method being called actually exists on Object.prototype.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>INHERITANCE</h2>
+        <h3>Prototype Chaining</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="build centered">
+        <img src="images/demos/ObjectExamle05.png" height="400" width="500">
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>
+              Another important thing to understand is that the object literal approach to creating prototype methods cannot be used with prototype chaining, because you end up overwriting the chain. Here’s an example:
+            </p>
+          </li>
+          <li>
+            <p>In this code, the prototype is reassigned to be an object literal after it was already assigned to be an instance of SuperType. The prototype now contains a new instance of Object instead of an instance of SuperType, so the prototype chain has been broken — there is no relationship between SubType and SuperType.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>INHERITANCE</h2>
+        <h3>Prototype Chaining</h3>
+      </hgroup>
+    </article>
+
+    <article>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  function SuperType(){
+    this.property = true;
+  }
+  SuperType.prototype.getSuperValue = function(){
+    return this.property;
+  };
+  function SubType(){
+    this.subproperty = false;
+  }
+  //inherit from SuperType
+  SubType.prototype = new SuperType();
+  //try to add new methods - this nullifies the previous line
+  <b>SubType.prototype = {
+  ￼ getSubValue : function (){
+      return this.subproperty;
+    },
+    someOtherMethod : function (){
+      return false;
+    }
+  };</b>
+  <b>var instance = new SubType();</b>
+  <b>alert(instance.getSuperValue()); //error!</b>
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>
+              Even though prototype chaining is a powerful tool for inheritance, it still has problems.
+            </p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>INHERITANCE</h2>
+        <h3>Prototype Chaining</h3>
+      </hgroup>
+    </article>
+
+    <article>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  function SubType(){ }
+  //inherit from SuperType
+  SubType.prototype = new SuperType();
+
+  var instance1 = new SubType();
+  <b>instance1.colors.push(“black”);
+  alert(instance1.colors); //”red,blue,green,black”</b>
+
+  var instance2 = new SubType();
+  <b>alert(instance2.colors); //”red,blue,green,black”</b>
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>
+              Developers began using a technique called constructor stealing (also sometimes called classical inheritance) to solve the inheritance problem with reference values on prototypes. The basic idea is quite simple: call the supertype constructor from within the subtype constructor, the apply() and call() methods can be used to execute a constructor on the newly created object, as in this example:
+            </p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>INHERITANCE</h2>
+        <h3>Constructor Stealing</h3>
+      </hgroup>
+    </article>
+
+    <article>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  function SuperType(){
+    this.colors = [“red”, “blue”, “green”];
+  }
+  function SubType(){
+    //inherit from SuperType
+    SuperType.call(this);
+  }
+  var instance1 = new SubType();
+  instance1.colors.push(“black”);
+  alert(instance1.colors); //”red,blue,green,black”
+
+  var instance2 = new SubType();
+  alert(instance2.colors); //”red,blue,green
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>
+              One advantage that constructor stealing offers over prototype chaining is the ability to pass arguments into the supertype constructor from within the subtype constructor. Consider the following:
+            </p>
+          </li>
+          <li>
+            <p>The downside to using constructor stealing exclusively is that it introduces the same problems as the constructor pattern for custom types: methods must be defined inside the constructor, so there’s no function reuse. </p>
+          </li>
+          <li>
+            <p>Furthermore, methods defined on the supertype’s prototype are not accessible on the subtype, so all types can use only the constructor pattern. Because of these issues, constructor stealing is rarely used on its own.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>INHERITANCE</h2>
+        <h3>Constructor Stealing</h3>
+      </hgroup>
+    </article>
+
+    <article>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  function SuperType(name){
+    this.name = name;
+  }
+  function SubType(){
+    //inherit from SuperType passing in an argument
+    SuperType.call(this, “Le Roi”);
+    //instance property
+    this.age = 29;
+  }
+  var instance = new SubType();
+  alert(instance.name); //”Le Roi”;
+  alert(instance.age); //29
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>
+              Combination inheritance (sometimes also called pseudoclassical inheritance) combines prototype chaining and constructor stealing to get the best of each approach. </p>
+          </li>
+          <li>
+            <p>The basic idea is to use prototype chaining to inherit properties and methods on the prototype and to use constructor stealing to inherit instance properties. </p>
+          </li>
+          <li>
+            <p>This allows function reuse by defining methods on the prototype and allows each instance to have its own properties. Consider the following:
+            </p>
+          </li>
+          <li>
+            <p>Addressing the downsides of both prototype chaining and constructor stealing, combination inheritance is the most frequently used inheritance pattern in JavaScript.</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>INHERITANCE</h2>
+        <h3>Combination Inheritance</h3>
+      </hgroup>
+    </article>
+
+    <article>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  function SuperType(name){
+    this.name = name;
+    this.colors = [“red”, “blue”, “green”];
+  }
+  SuperType.prototype.sayName = function(){
+    alert(this.name);
+  };
+  function SubType(name, age){
+    //inherit properties
+    SuperType.call(this, name);
+    this.age = age;
+  }
+  //inherit methods
+  SubType.prototype = new SuperType();
+  SubType.prototype.sayAge = function(){
+    alert(this.age);
+  };
+  var instance1 = new SubType(“Le Roi”, 26);
+  instance1.colors.push(“black”);
+  alert(instance1.colors); //”red,blue,green,black”
+  instance1.sayName(); //”Le Roi”;
+  instance1.sayAge(); //26
+  var instance2 = new SubType(“Le Coc”, 27);
+  alert(instance2.colors); //”red,blue,green”
+  instance2.sayName(); //”Le Coc”;
+  instance2.sayAge(); //27
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>
+              In 2006, Douglas Crockford, wrote an article titled “Prototypal Inheritance in JavaScript” in which he introduced a method of inheritance that didn’t involve the use of strictly defined constructors. </p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>INHERITANCE</h2>
+        <h3>Prototypal Inheritance</h3>
+      </hgroup>
+      <br>
+    </article>
+
+    <article>
+      <article class="build centered">
+        <img src="images/demos/Douglas Crockford.jpg">
+      </article>
+    </article>
+    <br>
+    <article>
+      <article class="build centered">
+        <p>“Hello, I’m Douglas Crockford, a Hans’s friend”</p>
+        <p><a href="http://javascript.crockford.com/prototypal.html">http://javascript.crockford.com/prototypal.html</a></p>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>His premise was that prototypes allow you to create new objects based on existing objects without the need for defining custom types. The function he introduced to this end is as follows:</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>INHERITANCE</h2>
+        <h3>Prototypal Inheritance</h3>
+      </hgroup>
+    </article>
+
+    <article>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  function object(o){
+    function F(){}
+    F.prototype = o;
+    return new F();
+  }
+
+  var person = {
+    name: “Douglas”,
+    friends: [“Quy”, “Thanh”, “Thinh”]
+  };
+
+  var anotherPerson = object(person);
+  anotherPerson.name = “Le Roi”;
+  anotherPerson.friends.push(“Vu”);
+
+  var yetAnotherPerson = object(person);
+  yetAnotherPerson.name = “Linda Kieu”;
+  yetAnotherPerson.friends.push(“Thang”);
+
+  alert(person.friends); //”Quy,Thanh,Thinh,Vu,Thang”
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            <p>ECMAScript 5 formalized the concept of prototypal inheritance by adding the Object.create() method. This method accepts two arguments, an object to use as the prototype for a new object and ￼an optional object defining additional properties to apply to the new object. When used with one argument, Object.create() behaves the same as the object() method:</p>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <article>
+      <hgroup>
+        <h2>INHERITANCE</h2>
+        <h3>Prototypal Inheritance</h3>
+      </hgroup>
+    </article>
+
+    <article>
+      <article class="smaller build">
+        <pre class="prettyprint" data-lang="javascript">
+  var person = {
+    name: “Douglas”,
+    friends: [“Quy”, “Thanh”, “Thinh”]
+  };
+
+  var anotherPerson = Object.create(person);
+  anotherPerson.name = “Le Roi”;
+  anotherPerson.friends.push(“Vu”);
+
+  var yetAnotherPerson = Object.create(person);
+  yetAnotherPerson.name = “Linda Kieu”;
+  yetAnotherPerson.friends.push(“Thao”);
+  alert(person.friends); //” Quy,Thanh,Thinh,Vu,Thao”
+        </pre>
+      </article>
+    </article>
+  </slide>
+
+  <slide class="thank-you-slide segue nobackground">
+    <article class="flexbox vleft auto-fadein">
+      <h2>&lt;Thank You!&gt;</h2>
+      <p>Important contact information goes here.</p>
+    </article>
+    <p class="auto-fadein" data-config-contact>
+      <!-- populated from slide_config.json -->
+    </p>
+  </slide>
+
+  <slide class="logoslide">
+    <article class="flexbox vcenter">
+      <span><img src="images/logo.png"></span>
+    </article>
+  </slide>
+
+  <slide class="backdrop"></slide>
+
+</slides>
+<!--[if IE]>
+  <script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+  <script>CFInstall.check({mode: 'overlay'});</script>
+<![endif]-->
+</body>
+</html>

@@ -630,6 +630,8 @@ article.smaller {
   background: rgba(0, 0, 0, 0.3);
   opacity: 0;
   pointer-events: none;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
   @include flexbox;
   @include flex-center-center;
   @include border-radius($slide-border-radius);
@@ -643,6 +645,10 @@ article.smaller {
     @include box-shadow(0 0 10px $gray-3);
     width: 60%;
     padding: 2em;
+  }
+  a{
+    word-wrap: break-word;
+    line-height: 1.5em;
   }
 }
 
