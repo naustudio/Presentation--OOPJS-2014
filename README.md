@@ -19,8 +19,8 @@ Presenter mode
 
 The slides contain a presenter mode feature (beta) to view + control the slides from a popup window.
 
-To enable presenter mode, add presentme=true to the URL: http://localhost:8000/full.html?presentme=true
+To enable presenter mode, add <b>presentme=true</b> to the URL: http://localhost:8000/full.html<b>?presentme=true</b>
 
-To disable presenter mode, hit http://localhost:8000/full.html?presentme=false
+To disable presenter mode, hit http://localhost:8000/full.html<b>?presentme=false</b>
 
 Presenter mode is sticky, so refreshing the page will persist your settings.
